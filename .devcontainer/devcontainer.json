@@ -1,0 +1,52 @@
+{
+  "name": "devcontainer-node",
+  // コンテナ立ち上げ時のオプションの指定
+  // --name ビルドするDocker containerの名称の指定
+  "runArgs": [
+    "--name=devcontainer-node"
+  ],
+  "build": {
+    "dockerfile": "Dockerfile",
+    // Update 'VARIANT' to pick a Node version: 18, 16, 14.
+    // Append -bullseye or -buster to pin to an OS version.
+    // Use -bullseye variants on local arm64/Apple Silicon.
+    "args": {
+      "VARIANT": "18-bullseye"
+    }
+  },
+  // https://containers.dev/features
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/pnpm:2": {
+      "version": "8.6.0"
+    }
+  },
+  // devcontainerとして開くvscode側の設定カスタマイズ
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "typescript.tsdk": "./node_modules/typescript/lib",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+      },
+      // devcontainerに自動でインストールするvscode extention
+      "extensions": [
+        "github.copilot",
+        "ms-azuretools.vscode-docker",
+        "mhutchie.git-graph",
+        "dbaeumer.vscode-eslint",
+        "ZixuanChen.vitest-explorer"
+      ]
+    }
+  },
+  // ローカルのnode_modulesフォルダをVolumeに保存して、ディスクパフォーマンス改善
+  // see: https://qiita.com/devtraenglish/items/1241e12a553772de991c
+  "mounts": [
+    "source=try-node-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "pnpm install",
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node"
+}
